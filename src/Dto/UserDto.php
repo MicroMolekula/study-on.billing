@@ -8,7 +8,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 class UserDto
 {
     #[Assert\NotBlank(message: "Поле email обязательно")]
-    #[Assert\Email(message: "Некоректрный адрес электронной почты")]
+    #[Assert\Email(message: "Некоректный адрес электронной почты")]
     #[UniqueEmail]
     public string $username;
 

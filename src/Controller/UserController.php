@@ -14,6 +14,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use OpenApi\Attributes as OA;
 
 class UserController extends AbstractController
 {
@@ -26,7 +27,68 @@ class UserController extends AbstractController
     ) {
     }
 
+    #[Route('/api/v1/auth', methods: ['POST'])]
+    #[OA\Post(
+        path: "/api/v1/auth",
+        summary: "Авторизация в сервисе billing",
+        requestBody: new OA\RequestBody(
+            description: "Данные пользователя",
+            required: true,
+            content: new OA\JsonContent(
+                type: 'object',
+                properties: [
+                    new OA\Property(property: 'username', type: 'string', example: 'name@mail.ru'),
+                    new OA\Property(property: 'password', type: 'string', minLength: 6),
+                ] 
+            )
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Авторизует и возвращает jwt токен пользователя',
+                content: new OA\JsonContent(
+                    type: 'object',
+                    properties: [
+                        new OA\Property(property: 'token', type: 'string', example: 'eyJ0eXAiOiJKV1QiLCJhbGciO...')
+                    ]
+                )
+            )
+        ]
+    )]
+    public function auth(): JsonResponse
+    {
+        return $this->json([]);
+    }
+
     #[Route('/api/v1/register', methods: ['POST'])]
+    #[OA\Post(
+        path: '/api/v1/register',
+        summary: 'Выполняет регистрацию в сервисе billing',
+        requestBody: new OA\RequestBody(
+            description: "Данные пользователя",
+            required: true,
+            content: new OA\JsonContent(
+                type: 'object',
+                properties: [
+                    new OA\Property(property: 'username', type: 'string', example: 'name@mail.ru'),
+                    new OA\Property(property: 'password', type: 'string', minLength: 6),
+                ] 
+            )
+        ),
+        responses: [
+            new OA\Response(
+                response: 201,
+                description: "Регистрирует нового пользователя",
+                content: new OA\JsonContent(
+                    type: 'object',
+                    properties: [
+                        new OA\Property(property: 'token', type: 'string', example: 'eyJ0eXAiOiJKV1QiLCJhbGciO...'),
+                        new OA\Property(property: 'roles', type: 'array', items: new OA\Items(type: 'string', example: 'ROLE_USER')),
+                    ]
+                )
+            )
+        ] 
+    )]
     public function register(Request $request): JsonResponse
     {
         $serializer = SerializerBuilder::create()->build();
@@ -54,6 +116,24 @@ class UserController extends AbstractController
     }
 
     #[Route(path:'/api/v1/users/current', methods: ['GET'])]
+    #[OA\Get(
+        path: '/api/v1/users/current',
+        summary: 'Возвращает данные о текущем пользователе',
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Вовращает данные о текущем пользователе',
+                content: new OA\JsonContent(
+                    type: 'object',
+                    properties: [
+                        new OA\Property(property: 'username', type: 'string', example: 'name@mail.com'),
+                        new OA\Property(property: 'roles', type: 'array', items: new OA\Items(type: 'string', example: 'ROLE_USER')),
+                        new OA\Property(property: 'balance', type: 'float', example: 1000.50),
+                    ]
+                )
+            )
+        ]
+    )]
     public function current(): JsonResponse
     {
         $token = $this->tokenStorageInterface->getToken();
