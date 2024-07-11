@@ -27,7 +27,7 @@ class UserController extends AbstractController
     ) {
     }
 
-    #[Route('/api/v1/auth', methods: ['POST'])]
+    #[Route('/api/v1/auth', name: 'api_auth_check', methods: ['POST'])]
     #[OA\Post(
         path: "/api/v1/auth",
         summary: "Авторизация в сервисе billing",
@@ -55,9 +55,10 @@ class UserController extends AbstractController
             )
         ]
     )]
-    public function auth(): JsonResponse
+    public function auth(Request $request): JsonResponse
     {
-        return $this->json([]);
+        $data = json_decode($request->getContent());
+        return $this->json($data);
     }
 
     #[Route('/api/v1/register', methods: ['POST'])]
