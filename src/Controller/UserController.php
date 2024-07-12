@@ -102,7 +102,7 @@ class UserController extends AbstractController
             foreach ($errors as $error) {
                 $errorMessage[] = $error->getMessage();
             }
-            return $this->json(['message' => implode(', ', $errorMessage)], 400);
+            return $this->json(['code' => 400,'message' => implode(', ', $errorMessage)], 400);
         }
 
         $user = User::fromDto($userDto, $this->hasher);

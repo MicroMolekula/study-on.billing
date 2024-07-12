@@ -12,6 +12,7 @@ class ErrorController extends AbstractController
     {
         if ($exception instanceof HttpExceptionInterface) {
             return $this->json([
+                'code' => $exception->getStatusCode(),
                 'message' => $exception->getMessage(),
             ], $exception->getStatusCode());
         }
