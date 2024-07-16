@@ -4,8 +4,8 @@ controllers:
         namespace: App\Controller
     type: attribute
 
-# api_auth_check:
-#     path: /api/v1/auth
+api_refresh_token:
+    path: /api/v1/token/refresh
 
 app.swagger_ui:
     path: /api/v1/doc

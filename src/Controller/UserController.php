@@ -11,6 +11,8 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 use App\Dto\UserDto;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Gesdinet\JWTRefreshTokenBundle\Generator\RefreshTokenGeneratorInterface;
+use Gesdinet\JWTRefreshTokenBundle\Model\RefreshTokenManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -24,6 +26,8 @@ class UserController extends AbstractController
         private JWTTokenManagerInterface $jwtManager,
         private EntityManagerInterface $entityManager,
         private TokenStorageInterface $tokenStorageInterface,
+        private RefreshTokenGeneratorInterface $refreshTokenGenerator,
+        private RefreshTokenManagerInterface $refreshTokenManager,
     ) {
     }
 
@@ -57,8 +61,7 @@ class UserController extends AbstractController
     )]
     public function auth(Request $request): JsonResponse
     {
-        $data = json_decode($request->getContent());
-        return $this->json($data);
+        return $this->json([]);
     }
 
     #[Route('/api/v1/register', methods: ['POST'])]
@@ -107,11 +110,17 @@ class UserController extends AbstractController
 
         $user = User::fromDto($userDto, $this->hasher);
         $token = $this->jwtManager->create($user);
+        $refreshToken = $this->refreshTokenGenerator->createForUserWithTtl(
+            $user,
+            (new \DateTime())->modify('+1 month')->getTimestamp()
+        );
+        $this->refreshTokenManager->save($refreshToken);
         $this->entityManager->persist($user);
         $this->entityManager->flush();
 
         return $this->json([
             'token' => $token,
+            'refresh_token' => $refreshToken->getRefreshToken(),
             'roles' => $user->getRoles(),
         ], 201);
     }
