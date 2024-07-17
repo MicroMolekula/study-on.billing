@@ -43,9 +43,11 @@ security:
         - { path: ^/api/v1/auth, roles:  PUBLIC_ACCESS }
         - { path: ^/api/v1/register, roles: PUBLIC_ACCESS }
         - { path: ^/api/v1/doc, roles: PUBLIC_ACCESS }
+        - { path: ^/api/v1/courses/\w+/pay, roles: IS_AUTHENTICATED_FULLY } 
+        - { path: ^/api/v1/courses, roles: PUBLIC_ACCESS }
         - { path: ^/api/v1, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/api/v1/token/refresh, roles: PUBLIC_ACCESS }
-    
+
     role_hierarchy:
         ROLE_SUPER_ADMIN: ROLE_USER
 
