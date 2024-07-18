@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use App\Dto\UserDto;
 use App\Entity\User;
+use App\Service\PaymentService;
 use Doctrine\ORM\EntityManagerInterface;
 use Gesdinet\JWTRefreshTokenBundle\Generator\RefreshTokenGeneratorInterface;
 use Gesdinet\JWTRefreshTokenBundle\Model\RefreshTokenManagerInterface;
@@ -28,6 +29,7 @@ class UserController extends AbstractController
         private TokenStorageInterface $tokenStorageInterface,
         private RefreshTokenGeneratorInterface $refreshTokenGenerator,
         private RefreshTokenManagerInterface $refreshTokenManager,
+        private PaymentService $paymentService,
     ) {
     }
 
@@ -53,7 +55,8 @@ class UserController extends AbstractController
                 content: new OA\JsonContent(
                     type: 'object',
                     properties: [
-                        new OA\Property(property: 'token', type: 'string', example: 'eyJ0eXAiOiJKV1QiLCJhbGciO...')
+                        new OA\Property(property: 'token', type: 'string', example: 'eyJ0eXAiOiJKV1QiLCJhbGciO...'),
+                        new OA\Property(property: 'refresh_token', type: 'string', example: 'e7c9fe08872e5adfd19407b6f7...')
                     ]
                 )
             )
@@ -88,6 +91,7 @@ class UserController extends AbstractController
                     properties: [
                         new OA\Property(property: 'token', type: 'string', example: 'eyJ0eXAiOiJKV1QiLCJhbGciO...'),
                         new OA\Property(property: 'roles', type: 'array', items: new OA\Items(type: 'string', example: 'ROLE_USER')),
+                        new OA\Property(property: 'refresh_token', type: 'string', example: 'e7c9fe08872e5adfd19407b6f7...')
                     ]
                 )
             )
@@ -118,6 +122,7 @@ class UserController extends AbstractController
         $this->entityManager->persist($user);
         $this->entityManager->flush();
 
+        $this->paymentService->deposit($user);
         return $this->json([
             'token' => $token,
             'refresh_token' => $refreshToken->getRefreshToken(),

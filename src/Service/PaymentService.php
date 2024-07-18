@@ -16,11 +16,16 @@ class PaymentService
     public function __construct(
         private EntityManagerInterface $entityManager,
         private int $rentalPeriod,
+        private int $startingBalance,
     ) {
     }
 
-    public function deposit(User $user, float $value): Transaction
+    public function deposit(User $user, float $value = -1.0): Transaction
     {
+        if($value === -1.0) {
+            $value = $this->startingBalance;
+        }
+
         $this->entityManager->getConnection()->beginTransaction();
         try {
             $transaction = new Transaction();
