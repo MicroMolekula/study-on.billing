@@ -160,12 +160,12 @@ class CourseController extends AbstractController
         } catch (PaymentServiceException $exception) {
             if($exception->getCode() === 1) {
                 return $this->json([
-                    'code' => 406,
+                    'error_code' => 406,
                     'message' => 'На вашем счету не достаточно средств',
                 ], 406);
             } else {
                 return $this->json([
-                    'code' => 500,
+                    'error_code' => 500,
                     'message' => $exception->getMessage(),
                 ], 500);
             }

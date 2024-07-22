@@ -2,7 +2,7 @@
 
 namespace App\Tests\Controller;
 
-use App\DataFixtures\AppFixtures;
+use App\DataFixtures\UserFixtures;
 use App\Tests\AbstractTest;
 use App\Entity\User;
 
@@ -12,7 +12,7 @@ class UserControllerTest extends AbstractTest
     protected function getFixtures(): array
     {
         return [
-            AppFixtures::class,
+            UserFixtures::class,
         ];
     }
 

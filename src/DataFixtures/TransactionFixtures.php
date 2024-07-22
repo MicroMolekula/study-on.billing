@@ -26,7 +26,7 @@ class TransactionFixtures extends Fixture
                 'type' => TransactionType::PAYMENT, 
                 'value' => 1000.50,
                 'created_at' => '2024-07-13T14:01:37+00:00',
-                'expires_at' => '2024-08-13T14:01:37+00:00',
+                'expires_at' => '2024-07-20T14:01:37+00:00',
             ],
             [
                 'course' => 'physics',
