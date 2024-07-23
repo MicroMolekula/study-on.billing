@@ -23,4 +23,18 @@ class CourseType
                 throw new TypeNotFoundException("Тип курса $type не найден");
         }
     }
+
+    public static function stringToType(string $type): int
+    {
+        switch ($type) {
+            case 'free':
+                return 0;
+            case 'rent':
+                return 1;
+            case 'buy':
+                return 2;
+            default:
+                throw new TypeNotFoundException("Тип курса $type не найден");
+        }
+    }
 }

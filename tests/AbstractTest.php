@@ -34,13 +34,14 @@ abstract class AbstractTest extends WebTestCase
         $loader = new Loader;
         foreach ($fixtures as $fixture) {
             if (!is_object($fixture)) {
-                if ($fixture == UserFixtures::class)
+                if ($fixture == UserFixtures::class) {
                     $fixture = new $fixture(
                         $this->getContainer()->get('security.user_password_hasher'), 
                         $this->getContainer()->get(PaymentService::class)
                     );
-                else
+                } else {
                     $fixture = new $fixture();
+                }
             }
             $loader->addFixture($fixture);
         }

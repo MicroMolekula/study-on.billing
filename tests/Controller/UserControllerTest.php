@@ -137,7 +137,7 @@ class UserControllerTest extends AbstractTest
         $this->assertResponseStatusCodeSame(400);
         $this->assertEquals(
             json_decode($client->getResponse()->getContent(), true)['message'],
-            'Пользователь с таким email уже сущесвует',
+            'Пользователь с таким email уже существует',
         );
     }
 
