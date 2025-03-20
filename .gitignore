@@ -18,3 +18,4 @@
 /config/jwt/*.pem
 ###< lexik/jwt-authentication-bundle ###
 /.vscode
+/.idea
