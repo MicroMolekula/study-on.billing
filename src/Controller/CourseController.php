@@ -2,12 +2,20 @@
 
 namespace App\Controller;
 
+use App\Attribute\ValidateDeserialize;
 use App\Config\CourseType;
+use App\Dto\CourseCreateDto;
+use App\Dto\CourseEditDto;
 use App\Entity\Course;
+use App\Entity\User;
+use App\Enum\EnumCourseType;
 use App\Exception\PaymentServiceException;
+use App\Service\CourseService;
 use App\Service\PaymentService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -19,8 +27,9 @@ class CourseController extends AbstractController
 
     public function __construct(
         private EntityManagerInterface $entityManager,
-        private Security $security,
-        private PaymentService $paymentService,
+        private Security               $security,
+        private PaymentService         $paymentService,
+        private CourseService          $courseService,
     ) {  
     }
 
@@ -35,12 +44,12 @@ class CourseController extends AbstractController
                 content: new OA\JsonContent(
                     type: 'array',
                     items: new OA\Items(
-                        type: 'object',
                         properties: [
                             new OA\Property(property: 'code', type: 'string', example: 'english-language'),
                             new OA\Property(property: 'type', type: 'string', example: 'rent'),
                             new OA\Property(property: 'price', type: 'float', example: 1000.50),
-                        ]
+                        ],
+                        type: 'object'
                     )
                 )
             )
@@ -74,12 +83,12 @@ class CourseController extends AbstractController
                 response: 200,
                 description: 'Возвращает данные об одном  курсе',
                 content: new OA\JsonContent(
-                    type: 'object',
                     properties: [
                         new OA\Property(property: 'code', type: 'string', example: 'english-language'),
                         new OA\Property(property: 'type', type: 'string', example: 'rent'),
                         new OA\Property(property: 'price', type: 'float', example: 1000.50),
-                    ]
+                    ],
+                    type: 'object'
                 )
             )
         ]
@@ -107,6 +116,38 @@ class CourseController extends AbstractController
         return $this->json($response);
     }
 
+    #[Route('/', name: 'app_create_course', methods: ['POST'])]
+    public function create(
+        #[ValidateDeserialize]
+        CourseCreateDto $course
+    ): JsonResponse {
+        $result = $this->courseService->create($course);
+        if ($result) {
+            return $this->json([
+                'success' => true,
+            ], Response::HTTP_CREATED);
+        }
+        return $this->json([
+            'success' => false,
+        ], Response::HTTP_INTERNAL_SERVER_ERROR);
+    }
+
+    #[Route('/{code}', name: 'app_edit_course', methods: ['POST'])]
+    public function edit(
+        string $code,
+        #[ValidateDeserialize]
+        CourseEditDto $course,
+    ): JsonResponse {
+        $result = $this->courseService->edit($code, $course);
+        if ($result) {
+            return $this->json([
+                'success' => true,
+            ], Response::HTTP_OK);
+        }
+        return $this->json([
+           'success' => false,
+        ], Response::HTTP_INTERNAL_SERVER_ERROR);
+    }
 
     #[Route('/{code}/pay', methods: ['POST'])]
     #[OA\Post(
@@ -117,23 +158,23 @@ class CourseController extends AbstractController
                 response: 200,
                 description: 'Оформляет покупку указанного курса',
                 content: new OA\JsonContent(
-                    type: 'object',
                     properties: [
                         new OA\Property(property: 'message', type: 'string', example: 'Курс куплен'),
                         new OA\Property(property: 'course_code', type: 'string', example: 'math'),
                         new OA\Property(property: 'amount', type: 'float', example: 2000.43),
-                    ]
+                    ],
+                    type: 'object'
                 )
             ),
             new OA\Response(
                 response: 406,
                 description: 'Ошибка из-за недостатка средств на счету',
                 content: new OA\JsonContent(
-                    type: 'object',
                     properties: [
                         new OA\Property(property: 'code', type: 'integer', example: 406),
                         new OA\Property(property: 'message', type: 'string', example: 'На вашем счету не достаточно средств'),
-                    ]
+                    ],
+                    type: 'object'
                 )
             ),
         ]
@@ -141,6 +182,7 @@ class CourseController extends AbstractController
     public function pay(string $code): JsonResponse
     {
         $course = $this->entityManager->getRepository(Course::class)->findOneBy(['chars_code' => $code]);
+        /** @var User $user */
         $user = $this->security->getUser();
 
         if (null === $course) {

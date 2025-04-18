@@ -12,26 +12,31 @@ class CourseFixtures extends Fixture
 
     private array $data = [
         [
+            'title' => 'Английский язык',
             'chars_code' => 'english-language',
             'type' => CourseType::RENT,
             'price' => 1000.50,
         ],
         [
+            'title' => 'Математика',
             'chars_code' => 'math',
             'type' => CourseType::BUY,
             'price' => 2000.50,
         ],
         [
+            'title' => 'Китайский язык',
             'chars_code' => 'chinesse-language',
             'type' => CourseType::RENT,
             'price' => 1500.30,
         ],
         [
+            'title' => 'История России',
             'chars_code' => 'history-of-russia',
             'type' => CourseType::FREE,
             'price' => null,
         ],
         [
+            'title' => 'Физика',
             'chars_code' => 'physics',
             'type' => CourseType::BUY,
             'price' => 1900.20,
@@ -42,7 +47,8 @@ class CourseFixtures extends Fixture
     {
         foreach ($this->data as $dataCourse) {
             $course = new Course();
-            $course->setCharsCode($dataCourse['chars_code'])
+            $course->setTitle($dataCourse['title'])
+                ->setCharsCode($dataCourse['chars_code'])
                 ->setType($dataCourse['type'])
                 ->setPrice($dataCourse['price']);
             $manager->persist($course);

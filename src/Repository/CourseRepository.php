@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Course;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -14,6 +15,18 @@ class CourseRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Course::class);
+    }
+
+    public function persistCourse(Course $course): bool
+    {
+        try {
+            $entityManager = $this->getEntityManager();
+            $entityManager->persist($course);
+            $entityManager->flush();
+            return true;
+        } catch (\Exception $exception) {
+            return false;
+        }
     }
 
     //    /**

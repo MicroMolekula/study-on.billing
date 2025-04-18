@@ -35,7 +35,6 @@ class TransactionController extends AbstractController
                 content: new OA\JsonContent(
                     type: 'array',
                     items: new OA\Items(
-                        type: 'object',
                         properties: [
                             new OA\Property(property: 'id', type: 'integer', example: 13),
                             new OA\Property(property: 'created_at', type: 'datetime', example: '2024-07-13T13:46:07+00:00'),
@@ -43,16 +42,16 @@ class TransactionController extends AbstractController
                             new OA\Property(property: 'course_code', type: 'string', example: 'english-language'),
                             new OA\Property(property: 'amount', type: 'float', example: 1600.4),
                             new OA\Property(property: 'expires_at', type: 'datetime', example: '2024-08-13T14:01:37+00:00')
-                        ]
+                        ],
+                        type: 'object'
                     )
                 )
             )
         ]
     )]
     public function index(
-        #[MapQueryString(
-            validationFailedStatusCode: 400
-        )] TransactionIndexFilterDto $filterDto = new TransactionIndexFilterDto(),
+        #[MapQueryString(validationFailedStatusCode: 400)]
+        TransactionIndexFilterDto $filterDto = new TransactionIndexFilterDto(),
     ): JsonResponse
     {
         $user = $this->security->getUser();

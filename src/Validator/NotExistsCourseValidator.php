@@ -7,20 +7,20 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
-class ExistsCourseValidator extends ConstraintValidator
+class NotExistsCourseValidator extends ConstraintValidator
 {
 
     public function __construct(
         private EntityManagerInterface $entityManager,
-    ) {  
+    ) {
     }
 
-    public function validate(mixed $value, Constraint $constraint): void
+    public function validate(mixed $value, Constraint $constraint)
     {
         /* @var ExistsCourse $constraint */
         $course = $this->entityManager->getRepository(Course::class)->findOneBy(['chars_code' => $value]);
 
-        if (null !== $course || $value === "") {
+        if (null === $course) {
             return;
         }
 

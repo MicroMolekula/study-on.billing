@@ -41,11 +41,11 @@ class UserController extends AbstractController
             description: "Данные пользователя",
             required: true,
             content: new OA\JsonContent(
-                type: 'object',
                 properties: [
                     new OA\Property(property: 'username', type: 'string', example: 'name@mail.ru'),
                     new OA\Property(property: 'password', type: 'string', minLength: 6),
-                ] 
+                ],
+                type: 'object'
             )
         ),
         responses: [
@@ -53,11 +53,11 @@ class UserController extends AbstractController
                 response: 200,
                 description: 'Авторизует и возвращает jwt токен пользователя',
                 content: new OA\JsonContent(
-                    type: 'object',
                     properties: [
                         new OA\Property(property: 'token', type: 'string', example: 'eyJ0eXAiOiJKV1QiLCJhbGciO...'),
                         new OA\Property(property: 'refresh_token', type: 'string', example: 'e7c9fe08872e5adfd19407b6f7...')
-                    ]
+                    ],
+                    type: 'object'
                 )
             )
         ]
@@ -75,11 +75,11 @@ class UserController extends AbstractController
             description: "Данные пользователя",
             required: true,
             content: new OA\JsonContent(
-                type: 'object',
                 properties: [
                     new OA\Property(property: 'username', type: 'string', example: 'name@mail.ru'),
                     new OA\Property(property: 'password', type: 'string', minLength: 6),
-                ] 
+                ],
+                type: 'object'
             )
         ),
         responses: [
@@ -87,12 +87,12 @@ class UserController extends AbstractController
                 response: 201,
                 description: "Регистрирует нового пользователя",
                 content: new OA\JsonContent(
-                    type: 'object',
                     properties: [
                         new OA\Property(property: 'token', type: 'string', example: 'eyJ0eXAiOiJKV1QiLCJhbGciO...'),
                         new OA\Property(property: 'roles', type: 'array', items: new OA\Items(type: 'string', example: 'ROLE_USER')),
                         new OA\Property(property: 'refresh_token', type: 'string', example: 'e7c9fe08872e5adfd19407b6f7...')
-                    ]
+                    ],
+                    type: 'object'
                 )
             )
         ] 
@@ -139,12 +139,12 @@ class UserController extends AbstractController
                 response: 200,
                 description: 'Вовращает данные о текущем пользователе',
                 content: new OA\JsonContent(
-                    type: 'object',
                     properties: [
                         new OA\Property(property: 'username', type: 'string', example: 'name@mail.com'),
                         new OA\Property(property: 'roles', type: 'array', items: new OA\Items(type: 'string', example: 'ROLE_USER')),
                         new OA\Property(property: 'balance', type: 'float', example: 1000.50),
-                    ]
+                    ],
+                    type: 'object'
                 )
             )
         ]
