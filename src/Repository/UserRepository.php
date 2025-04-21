@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -31,6 +32,31 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $user->setPassword($newHashedPassword);
         $this->getEntityManager()->persist($user);
         $this->getEntityManager()->flush();
+    }
+
+    /**
+     * @return array<string, array<string, string>>
+     * @throws \DateMalformedStringException
+     */
+    public function findUsersWithExpiresCourses(): array
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->select('u.id', 'u.email', 't.id', 't.expires_at', 'c.title')
+            ->from('App\Entity\User', 'u')
+            ->join('u.transactions', 't')
+            ->join('t.course', 'c')
+            ->where('t.expires_at BETWEEN :tomorrow_start AND :tomorrow_end')
+            ->setParameter('tomorrow_start', new \DateTime('tomorrow'))
+            ->setParameter('tomorrow_end', (new \DateTime('tomorrow'))->modify('+1 day'));
+        $result = $qb->getQuery()->getResult();
+        $courses = [];
+        foreach ($result as $course) {
+            $courses[$course['email']][] = [
+                'expires_at' => $course['expires_at'],
+                'title' => $course['title'],
+            ];
+        }
+        return $courses;
     }
 
     //    /**
