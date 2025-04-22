@@ -4,11 +4,13 @@ namespace App\Service;
 
 use App\Repository\UserRepository;
 use App\Service\Email\StudyOnMailer;
+use App\Service\Twig\Twig;
 use Symfony\Component\Mime\Email;
 
 class RentNotificationsService
 {
     public function __construct(
+        private Twig $twig,
         private StudyOnMailer $mailer,
         private UserRepository $userRepository
     ) {
@@ -33,17 +35,20 @@ class RentNotificationsService
         $email = (new Email())
             ->to($to)
             ->subject('Уведомление об окончании аренды курсов')
-            ->text($notify);
+            ->html($notify);
         $this->mailer->send($email);
     }
 
     private function generateNotifications(array $data): string
     {
-        $notify = "Уважаемый клиент! У вас есть курсы, срок аренды которых подходит к концу:\n";
-        foreach ($data as $item) {
-            $date = date("d.m.Y H:i", $item['expires_at']->getTimestamp());
-            $notify .= "'{$item['title']}' действует до $date.\n";
+        foreach ($data as $key => $item) {
+            $data[$key]['expires_at'] = date("d.m.Y H:i", $item['expires_at']->getTimestamp());
         }
-        return $notify;
+        return $this->twig->render(
+            'rent.notify.html.twig',
+            [
+                'courses' => $data,
+            ]
+        );
     }
 }

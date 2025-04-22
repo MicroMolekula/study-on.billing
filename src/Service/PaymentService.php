@@ -15,6 +15,7 @@ class PaymentService
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
+        private OrderNotificationsService $orderNotificationsService,
         private int $rentalPeriod,
         private int $startingBalance,
     ) {
@@ -79,6 +80,7 @@ class PaymentService
             $this->entityManager->flush();     
             $this->entityManager->getConnection()->commit();
 
+            $this->orderNotificationsService->sendNotify($user, $transaction);
             return $transaction;
         } catch (\Exception $e) {
             $this->entityManager->getConnection()->rollBack();

@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Course;
+use App\Enum\EnumCourseType;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\Persistence\ManagerRegistry;
@@ -27,6 +28,23 @@ class CourseRepository extends ServiceEntityRepository
         } catch (\Exception $exception) {
             return false;
         }
+    }
+
+    public function findAnalyzesCourses(\DateTime $date): array
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->select('c.title', 'c.type', 'COUNT(c.id) as count', 'SUM(t.value) as sum')
+            ->from(Course::class, 'c')
+            ->join('c.transactions', 't')
+            ->where('t.created_at BETWEEN :start AND :end')
+            ->setParameter('start', $date)
+            ->setParameter('end', (clone $date)->modify('+1 month'))
+            ->groupBy('c.id');
+        $result = $qb->getQuery()->getResult();
+        foreach ($result as $key => $course) {
+            $result[$key]['type'] = EnumCourseType::byCode($course['type'])->title();
+        }
+        return $result;
     }
 
     //    /**

@@ -17,12 +17,30 @@ enum EnumCourseType: string
         };
     }
 
+    public function title(): string
+    {
+        return match ($this) {
+            self::RENT => 'Аренда',
+            self::FREE => 'Бесплатный',
+            self::BUY => 'Платный',
+        };
+    }
+
     public static function byString(string $value): EnumCourseType
     {
         return match ($value) {
             'rent' => self::RENT,
             'free' => self::FREE,
             'buy' => self::BUY,
+        };
+    }
+
+    public static function byCode(int $code): EnumCourseType
+    {
+        return match ($code) {
+            1 => self::RENT,
+            0 => self::FREE,
+            2 => self::BUY,
         };
     }
 }

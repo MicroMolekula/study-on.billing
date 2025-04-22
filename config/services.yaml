@@ -30,3 +30,6 @@ services:
     App\Service\Email\StudyOnMailer:
         arguments:
             $mailFrom: '%env(MAIL_FROM)%'
+    App\Service\PaymentReportService:
+        arguments:
+            $reportMail: '%env(REPORT_MAIL)%'

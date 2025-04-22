@@ -5,18 +5,42 @@ namespace App\Message;
 class Email
 {
     public function __construct(
-        private string $content,
+        private string $to,
+        private string $subject,
+        private string $contentHTML,
     ) {
     }
 
-    public function getContent(): string
+    public function getTo(): string
     {
-        return $this->content;
+        return $this->to;
     }
 
-    public function setContent(string $content): Email
+    public function setTo(string $to): Email
     {
-        $this->content = $content;
+        $this->to = $to;
+        return $this;
+    }
+
+    public function getSubject(): string
+    {
+        return $this->subject;
+    }
+
+    public function setSubject(string $subject): Email
+    {
+        $this->subject = $subject;
+        return $this;
+    }
+
+    public function getContentHTML(): string
+    {
+        return $this->contentHTML;
+    }
+
+    public function setContentHTML(string $contentHTML): Email
+    {
+        $this->contentHTML = $contentHTML;
         return $this;
     }
 }

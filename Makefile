@@ -27,6 +27,9 @@ phpunit:
 run-consumer:
 	@${PHP} bin/console messenger:consume async
 
+payment-report:
+	@${PHP} bin/console payment:report
+
 # В файл local.mk можно добавлять дополнительные make-команды,
 # которые требуются лично вам, но не нужны на проекте в целом
 -include local.mk

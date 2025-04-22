@@ -12,7 +12,6 @@ class TransactionIndexFilterDto
 
     #[ExistsCourse]
     public ?string $course_code = '';
-    
-    #[Assert\Type('bool')]
+
     public bool $skip_expired = false;
 }

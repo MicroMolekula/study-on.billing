@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Config\TransactionType;
 use App\Dto\TransactionIndexFilterDto;
 use App\Entity\Transaction;
+use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -54,6 +55,7 @@ class TransactionController extends AbstractController
         TransactionIndexFilterDto $filterDto = new TransactionIndexFilterDto(),
     ): JsonResponse
     {
+        /** @var User $user */
         $user = $this->security->getUser();
         $transactions = $this->entityManager->getRepository(Transaction::class)
             ->findByUserWithFilter($user, $filterDto);
