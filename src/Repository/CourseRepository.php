@@ -30,6 +30,7 @@ class CourseRepository extends ServiceEntityRepository
         }
     }
 
+    // тест ci
     public function findAnalyzesCourses(\DateTime $date): array
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
