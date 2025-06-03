@@ -25,6 +25,7 @@ class PaymentReportCommand extends Command
         $this->addOption('year', 'y', InputOption::VALUE_OPTIONAL, 'Год');
     }
 
+    // !!!
     public function execute(InputInterface $input, OutputInterface $output): int
     {
         $date = new \DateTime('first day of this month');
