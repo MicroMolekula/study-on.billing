@@ -29,7 +29,6 @@ services:
     user: ${UID:-1000}:${GID:-1000}
     volumes:
       - ${PWD}:/app
-      - ${HOME}/.composer:/.composer
     environment:
       - COMPOSER_ALLOW_SUPERUSER=1
     links:

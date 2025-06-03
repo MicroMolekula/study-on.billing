@@ -46,7 +46,6 @@ jobs:
       - name: Setting test environment and DB
         #        проверяйте название контейнера и БД
         run: |
-          git config --global --add safe.directory /app
           echo "DATABASE_URL=pgsql://pguser:pguser@postgres:5432/study_on" >> .env.test.local
           ls -la
           docker ps -a
