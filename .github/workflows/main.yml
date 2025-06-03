@@ -56,4 +56,4 @@ jobs:
           docker-compose exec -T php bin/console doctrine:migrations:migrate -n --env=test
           docker-compose exec -T php bin/console doctrine:fixtures:load -n --group=AppFixtures --env=test
       - name: run PHPUnit
-        run: docker-compose exec -T php bin/phpunit --no-cache
+        run: docker-compose exec -T php bin/phpunit
